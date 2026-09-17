@@ -97,7 +97,7 @@ public partial class MainWindow : Window
 
     private void Packages_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        Preview.Source = null; Details.Text = ""; PrinterBadge.Visibility = Visibility.Collapsed; FavoriteButton.Content = "☆ Oblíbené";
+        Preview.Source = null; Details.Text = ""; NoteBox.Text = ""; PrinterBadge.Visibility = Visibility.Collapsed; FavoriteButton.Content = "☆ Oblíbené";
         if (Selected is null) return;
         try
         {
@@ -108,6 +108,7 @@ public partial class MainWindow : Window
             PrinterBadgeText.Text = isCanon ? "CANON PCL6" : "OKI PCL6";
             PrinterBadge.Visibility = Visibility.Visible;
             FavoriteButton.Content = p.Manifest.Metadata.TryGetValue("favorite", out var favorite) && favorite == "true" ? "★ Oblíbené" : "☆ Oblíbené";
+            NoteBox.Text = p.Manifest.Metadata.TryGetValue("note", out var note) ? note : "";
             if (p.Preview is not null) { var bitmap = new BitmapImage(); bitmap.BeginInit(); bitmap.StreamSource = new MemoryStream(p.Preview); bitmap.CacheOption = BitmapCacheOption.OnLoad; bitmap.EndInit(); bitmap.Freeze(); Preview.Source = bitmap; }
         }
         catch (Exception ex) { Details.Text = "Balíček nelze načíst: " + ex.Message; }
@@ -135,6 +136,19 @@ public partial class MainWindow : Window
             metadata["favorite"] = favorite ? "true" : "false";
             PackageArchive.Save(Selected.Path, package with { Manifest = package.Manifest with { Metadata = metadata } });
             RefreshList();
+        }
+        catch (Exception ex) { ShowError(ex); }
+    }
+    private void SaveNote_Click(object sender, RoutedEventArgs e)
+    {
+        if (Selected is null) return;
+        try
+        {
+            var package = PackageArchive.Load(Selected.Path);
+            var metadata = new Dictionary<string, string>(package.Manifest.Metadata);
+            metadata["note"] = NoteBox.Text.Trim();
+            PackageArchive.Save(Selected.Path, package with { Manifest = package.Manifest with { Metadata = metadata } });
+            MessageBox.Show("Poznámka byla uložena do balíčku.", "Tiskové balíčky");
         }
         catch (Exception ex) { ShowError(ex); }
     }

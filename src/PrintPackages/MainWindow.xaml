@@ -32,6 +32,9 @@
           </DockPanel>
           <Image x:Name="Preview" Height="250" Stretch="Uniform" Margin="0,14,0,10" />
           <TextBlock x:Name="Details" TextWrapping="Wrap" />
+          <TextBlock Text="Poznámka" FontWeight="SemiBold" Margin="0,16,0,4" />
+          <TextBox x:Name="NoteBox" AcceptsReturn="True" TextWrapping="Wrap" Height="64" VerticalScrollBarVisibility="Auto" />
+          <Button Click="SaveNote_Click" HorizontalAlignment="Left" Padding="12,4" Margin="0,6,0,0">Uložit poznámku</Button>
           <StackPanel Orientation="Horizontal" Margin="0,18,0,0">
             <TextBlock Text="Počet kopií:" VerticalAlignment="Center"/>
             <TextBox x:Name="CopiesBox" Width="48" Text="1" Margin="8,0" />

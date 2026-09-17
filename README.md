@@ -14,7 +14,7 @@ dotnet run --project src/PrintPackages
 
 Balíček `.printpkg` je ZIP obsahující PDF, `manifest.json`, `driver.devmode` a náhled první stránky. Při tisku aplikace vyžaduje shodný název i verzi ovladače, aby nezměnila výsledek tisku.
 
-Knihovna zobrazuje strom složek, virtuální pohled **Oblíbené** a barevný štítek cílové tiskárny. Oblíbenost se ukládá do metadat balíčku a přenáší se při exportu/importu.
+Knihovna zobrazuje strom složek, virtuální pohled **Oblíbené**, barevný štítek cílové tiskárny a poznámku u každého balíčku. Oblíbenost i poznámka se ukládají do metadat balíčku a přenášejí se při exportu/importu.
 
 ## Hotová Windows aplikace
 
