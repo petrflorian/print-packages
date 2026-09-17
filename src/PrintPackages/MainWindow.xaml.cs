@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 using PdfiumViewer;
+using System.IO;
 
 namespace PrintPackages;
 
@@ -98,11 +99,11 @@ public partial class MainWindow : Window
     private void Move_Click(object sender, RoutedEventArgs e)
     {
         if (Selected is null) return;
-        using var dialog = new System.Windows.Forms.FolderBrowserDialog { InitialDirectory = _library.Root, Description = "Vyberte cílovou složku v knihovně" };
-        if (dialog.ShowDialog() != System.Windows.Forms.DialogResult.OK) return;
-        var folder = Path.GetFullPath(dialog.SelectedPath);
+        var destination = InputPrompt.Ask("Cílová složka v knihovně", "Nedávné");
+        if (string.IsNullOrWhiteSpace(destination)) return;
+        var folder = Path.GetFullPath(Path.Combine(_library.Root, destination));
         if (!folder.StartsWith(Path.GetFullPath(_library.Root), StringComparison.OrdinalIgnoreCase)) { MessageBox.Show("Cílová složka musí být v knihovně tisků."); return; }
-        try { _library.Move(Selected.Path, Path.Combine(folder, Path.GetFileName(Selected.Path))); RefreshList(); } catch (Exception ex) { ShowError(ex); }
+        try { Directory.CreateDirectory(folder); _library.Move(Selected.Path, Path.Combine(folder, Path.GetFileName(Selected.Path))); RefreshList(); } catch (Exception ex) { ShowError(ex); }
     }
     private void Delete_Click(object sender, RoutedEventArgs e) { if (Selected is null) return; if (MessageBox.Show($"Smazat {Selected.DisplayName}?", "Potvrdit", MessageBoxButton.YesNo) == MessageBoxResult.Yes) { _library.Delete(Selected.Path); RefreshList(); } }
     private void ShowError(Exception ex) => MessageBox.Show(ex.Message, "Tiskové balíčky", MessageBoxButton.OK, MessageBoxImage.Error);

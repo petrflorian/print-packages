@@ -2,12 +2,17 @@ using System.Drawing.Printing;
 using System.Printing;
 using System.Printing.Interop;
 using System.Runtime.InteropServices;
+using System.Diagnostics;
+using System.IO;
 using PdfiumViewer;
 
 namespace PrintPackages;
 
 public sealed class WindowsPrinterService
 {
+    private static string DriverVersion(PrintDriver driver) =>
+        string.IsNullOrWhiteSpace(driver.DriverPath) ? "unknown" : FileVersionInfo.GetVersionInfo(driver.DriverPath).FileVersion ?? "unknown";
+
     private static bool IsSupportedOkiPcl6(PrintQueue queue) =>
         queue.QueueDriver.Name.Contains("OKI", StringComparison.OrdinalIgnoreCase) &&
         (queue.QueueDriver.Name.Contains("PCL6", StringComparison.OrdinalIgnoreCase) ||
@@ -23,7 +28,7 @@ public sealed class WindowsPrinterService
         using var converter = new PrintTicketConverter(queue.FullName, PrintTicketConverter.MaxPrintSchemaVersion);
         var bytes = converter.ConvertPrintTicketToDevMode(dialog.PrintTicket, BaseDevModeType.UserDefault);
         if (bytes.Length == 0) throw new InvalidOperationException("Ovladač nevrátil nastavení DEVMODE.");
-        return (new PrinterIdentity(queue.FullName, queue.QueueDriver.Name, queue.QueueDriver.DriverVersion.ToString(), queue.Name), bytes);
+        return (new PrinterIdentity(queue.FullName, queue.QueueDriver.Name, DriverVersion(queue.QueueDriver), queue.Name), bytes);
     }
 
     public void Validate(PrinterIdentity expected)
@@ -34,7 +39,7 @@ public sealed class WindowsPrinterService
         if (!IsSupportedOkiPcl6(queue))
             throw new InvalidOperationException("Tiskárna nepoužívá požadovaný OKI PCL6/PCL XL ovladač.");
         if (!string.Equals(queue.QueueDriver.Name, expected.DriverName, StringComparison.Ordinal) ||
-            !string.Equals(queue.QueueDriver.DriverVersion.ToString(), expected.DriverVersion, StringComparison.Ordinal))
+            !string.Equals(DriverVersion(queue.QueueDriver), expected.DriverVersion, StringComparison.Ordinal))
             throw new InvalidOperationException("Nalezená tiskárna nemá stejný OKI ovladač/verzi jako balíček.");
         if (queue.IsOffline) throw new InvalidOperationException("Tiskárna je offline.");
     }
