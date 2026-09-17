@@ -1,3 +1,6 @@
+using Xunit;
+using System.IO;
+
 namespace PrintPackages.Tests;
 
 public sealed class PackageArchiveTests
