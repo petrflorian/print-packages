@@ -4,14 +4,21 @@ using System.Printing.Interop;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
 using System.IO;
+using System.Management;
 using PdfiumViewer;
 
 namespace PrintPackages;
 
 public sealed class WindowsPrinterService
 {
-    private static string DriverVersion(PrintDriver driver) =>
-        string.IsNullOrWhiteSpace(driver.DriverPath) ? "unknown" : FileVersionInfo.GetVersionInfo(driver.DriverPath).FileVersion ?? "unknown";
+    private static string DriverVersion(PrintDriver driver)
+    {
+        var name = driver.Name.Replace("'", "''", StringComparison.Ordinal);
+        using var searcher = new ManagementObjectSearcher($"SELECT DriverVersion FROM Win32_PrinterDriver WHERE Name = '{name}'");
+        foreach (ManagementObject result in searcher.Get())
+            return result["DriverVersion"]?.ToString() ?? "unknown";
+        return "unknown";
+    }
 
     private static bool IsSupportedOkiPcl6(PrintQueue queue) =>
         queue.QueueDriver.Name.Contains("OKI", StringComparison.OrdinalIgnoreCase) &&
