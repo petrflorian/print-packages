@@ -14,6 +14,8 @@ dotnet run --project src/PrintPackages
 
 Balíček `.printpkg` je ZIP obsahující PDF, `manifest.json`, `driver.devmode` a náhled první stránky. Při tisku aplikace vyžaduje shodný název i verzi ovladače, aby nezměnila výsledek tisku.
 
+Knihovna zobrazuje strom složek, virtuální pohled **Oblíbené** a barevný štítek cílové tiskárny. Oblíbenost se ukládá do metadat balíčku a přenáší se při exportu/importu.
+
 ## Hotová Windows aplikace
 
 Po označení verze ve formátu `v1.0.0` GitHub Actions vytvoří v **Releases** soubor `PrintPackages-win-x64.zip`. Ten se na Windows pouze rozbalí a spustí se `PrintPackages.exe`; .NET Runtime není potřeba instalovat. Cílová tiskárna s PCL6/PCL XL ovladačem však musí být v systému nainstalovaná.
