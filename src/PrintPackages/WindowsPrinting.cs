@@ -20,8 +20,7 @@ public sealed class WindowsPrinterService
         return "unknown";
     }
 
-    private static bool IsSupportedOkiPcl6(PrintQueue queue) =>
-        queue.QueueDriver.Name.Contains("OKI", StringComparison.OrdinalIgnoreCase) &&
+    private static bool IsSupportedPcl6(PrintQueue queue) =>
         (queue.QueueDriver.Name.Contains("PCL6", StringComparison.OrdinalIgnoreCase) ||
          queue.QueueDriver.Name.Contains("PCL XL", StringComparison.OrdinalIgnoreCase));
 
@@ -30,8 +29,8 @@ public sealed class WindowsPrinterService
         var dialog = new System.Windows.Controls.PrintDialog();
         if (dialog.ShowDialog() != true || dialog.PrintQueue is null || dialog.PrintTicket is null) throw new OperationCanceledException();
         var queue = dialog.PrintQueue;
-        if (!IsSupportedOkiPcl6(queue))
-            throw new InvalidOperationException("Vyberte tiskárnu OKI C844 s nainstalovaným ovladačem PCL6/PCL XL.");
+        if (!IsSupportedPcl6(queue))
+            throw new InvalidOperationException("Vyberte tiskárnu s nainstalovaným ovladačem PCL6/PCL XL (např. OKI C844 nebo Canon i-SENSYS X 1533P II).");
         using var converter = new PrintTicketConverter(queue.FullName, PrintTicketConverter.MaxPrintSchemaVersion);
         var bytes = converter.ConvertPrintTicketToDevMode(dialog.PrintTicket, BaseDevModeType.UserDefault);
         if (bytes.Length == 0) throw new InvalidOperationException("Ovladač nevrátil nastavení DEVMODE.");
@@ -43,8 +42,8 @@ public sealed class WindowsPrinterService
         using var server = new LocalPrintServer();
         var queue = server.GetPrintQueue(expected.QueueName);
         queue.Refresh();
-        if (!IsSupportedOkiPcl6(queue))
-            throw new InvalidOperationException("Tiskárna nepoužívá požadovaný OKI PCL6/PCL XL ovladač.");
+        if (!IsSupportedPcl6(queue))
+            throw new InvalidOperationException("Tiskárna nepoužívá požadovaný ovladač PCL6/PCL XL.");
         if (!string.Equals(queue.QueueDriver.Name, expected.DriverName, StringComparison.Ordinal) ||
             !string.Equals(DriverVersion(queue.QueueDriver), expected.DriverVersion, StringComparison.Ordinal))
             throw new InvalidOperationException("Nalezená tiskárna nemá stejný OKI ovladač/verzi jako balíček.");

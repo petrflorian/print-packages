@@ -1,10 +1,10 @@
 # Tiskové balíčky
 
-Windows WPF aplikace pro ukládání a opakované odesílání PDF na OKI C844 se zachovaným nastavením ovladače.
+Windows WPF aplikace pro ukládání a opakované odesílání PDF se zachovaným nastavením PCL6/PCL XL ovladače. Podporuje například OKI C844 a Canon i-SENSYS X 1533P II.
 
 ## Spuštění
 
-Na Windows 10/11 s .NET 8 SDK a nainstalovaným ovladačem **OKI PCL6/PCL XL** pro C844:
+Na Windows 10/11 s .NET 8 SDK a nainstalovaným ovladačem **PCL6/PCL XL** pro danou tiskárnu (OKI C844 nebo Canon i-SENSYS X 1533P II):
 
 ```powershell
 dotnet restore
@@ -16,4 +16,4 @@ Balíček `.printpkg` je ZIP obsahující PDF, `manifest.json`, `driver.devmode`
 
 ## Hotová Windows aplikace
 
-Po označení verze ve formátu `v1.0.0` GitHub Actions vytvoří v **Releases** soubor `PrintPackages-win-x64.zip`. Ten se na Windows pouze rozbalí a spustí se `PrintPackages.exe`; .NET Runtime není potřeba instalovat. Tiskárna OKI C844 s ovladačem PCL6/PCL XL však musí být v systému nainstalovaná.
+Po označení verze ve formátu `v1.0.0` GitHub Actions vytvoří v **Releases** soubor `PrintPackages-win-x64.zip`. Ten se na Windows pouze rozbalí a spustí se `PrintPackages.exe`; .NET Runtime není potřeba instalovat. Cílová tiskárna s PCL6/PCL XL ovladačem však musí být v systému nainstalovaná.
