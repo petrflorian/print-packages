@@ -1,0 +1,37 @@
+name: Build Windows release
+
+on:
+  workflow_dispatch:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+      - name: Test
+        run: dotnet test --configuration Release
+      - name: Publish self-contained application
+        run: >
+          dotnet publish src/PrintPackages/PrintPackages.csproj
+          --configuration Release
+          --runtime win-x64
+          --self-contained true
+          -p:PublishSingleFile=true
+          -p:IncludeNativeLibrariesForSelfExtract=true
+          --output publish/PrintPackages-win-x64
+      - name: Create ZIP
+        run: Compress-Archive -Path publish/PrintPackages-win-x64/* -DestinationPath PrintPackages-win-x64.zip
+      - name: Create GitHub release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          files: PrintPackages-win-x64.zip
