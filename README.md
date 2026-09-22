@@ -14,6 +14,8 @@ dotnet run --project src/PrintPackages
 
 Balíček `.printpkg` je ZIP obsahující PDF, `manifest.json`, `driver.devmode` a náhled první stránky. Při tisku aplikace vyžaduje shodný název i verzi ovladače, aby nezměnila výsledek tisku.
 
+Při tvorbě balíčku aplikace po výběru tiskárny otevře přímo nativní okno **Vlastnosti tisku** jejího PCL6/PCL XL ovladače. Nastavení se tedy provádí v originálním dialogu Canon nebo OKI, nikoli v omezeném obecném dialogu aplikace.
+
 Knihovna zobrazuje strom složek, virtuální pohled **Oblíbené**, barevný štítek cílové tiskárny a poznámku u každého balíčku. Oblíbenost i poznámka se ukládají do metadat balíčku a přenášejí se při exportu/importu.
 
 ## Hotová Windows aplikace
